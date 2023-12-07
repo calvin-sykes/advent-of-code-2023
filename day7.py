@@ -5,28 +5,33 @@ from itertools import combinations_with_replacement
 cards = "23456789TJQKA"
 cards_jokers = "J23456789TQKA"
 
-type_score = {"high_card": 1, "one_pair": 2, "two_pair": 3,
-              "three_kind": 4, "full_house": 5, "four_kind": 6, "five_kind": 7}
+HIGH_CARD = 1
+ONE_PAIR = 2
+TWO_PAIR = 3
+THREE_KIND = 4
+FULL_HOUSE = 5
+FOUR_KIND = 6
+FIVE_KIND = 7
 
 def hand_type(hand):
     counts = Counter(hand).most_common()
     match counts[0][1]:
         case 5:
-            return "five_kind"
+            return FIVE_KIND
         case 4:
-            return "four_kind"
+            return FOUR_KIND
         case 3:
             if counts[1][1] == 2:
-                return "full_house"
+                return FULL_HOUSE
             else:
-                return "three_kind"
+                return THREE_KIND
         case 2:
             if counts[1][1] == 2:
-                return "two_pair"
+                return TWO_PAIR
             else:
-                return "one_pair"
+                return ONE_PAIR
         case 1:
-            return "high_card"
+            return HIGH_CARD
 
 def hand_type_jokers(hand):
     best_type = hand_type(hand)
@@ -34,14 +39,12 @@ def hand_type_jokers(hand):
         return best_type
     else:
         nj = hand.count("J")
-        unique_cards = Counter(hand)
-        del unique_cards["J"]
-        unique_cards = "".join([c * cnt for c, cnt in unique_cards.items()])
+        unique_cards = set(c for c in hand if c != "J")
         # Generate every permutation of jokers turned into other cards, and check each for score
         for combi in combinations_with_replacement(unique_cards, nj):
-            wild_hand = unique_cards + "".join(combi)
+            wild_hand = hand.replace("J", "{}").format(*combi)
             wild_type = hand_type(wild_hand)
-            if type_score[wild_type] > type_score[best_type]:
+            if wild_type > best_type:
                 best_type = wild_type
     return best_type
 
@@ -49,8 +52,8 @@ def compare_hand_value(h1, h2, wild_jokers=False):
     type_fn = hand_type_jokers if wild_jokers else hand_type
     card_order = cards_jokers if wild_jokers else cards
         
-    t1 = type_score[type_fn(h1)]
-    t2 = type_score[type_fn(h2)]
+    t1 = type_fn(h1)
+    t2 = type_fn(h2)
 
     if t1 < t2:
         return -1
@@ -60,10 +63,7 @@ def compare_hand_value(h1, h2, wild_jokers=False):
         for c1, c2 in zip(h1, h2):
             i1 = card_order.index(c1)
             i2 = card_order.index(c2)
-            if i1 < i2:
-                return -1
-            elif i1 > i2:
-                return 1
+            return (i1 > i2) - (i1 < i2)
     return 0
 
 compare_hand_key = cmp_to_key(compare_hand_value)
@@ -98,6 +98,8 @@ def day7_part2(filename):
 
 if __name__ == "__main__":
     print("Part 1 example", day7_part1("input/day7_example.txt"))
+    print("Part 1 extra", day7_part1("input/day7_extra.txt"))
     print("Part 1", day7_part1("input/day7.txt"))
     print("Part 2 example", day7_part2("input/day7_example.txt"))
+    print("Part 2 extra", day7_part2("input/day7_extra.txt"))
     print("Part 2", day7_part2("input/day7.txt"))
