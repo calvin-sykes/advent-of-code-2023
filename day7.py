@@ -5,33 +5,12 @@ from itertools import combinations_with_replacement
 cards = "23456789TJQKA"
 cards_jokers = "J23456789TQKA"
 
-HIGH_CARD = 1
-ONE_PAIR = 2
-TWO_PAIR = 3
-THREE_KIND = 4
-FULL_HOUSE = 5
-FOUR_KIND = 6
-FIVE_KIND = 7
-
 def hand_type(hand):
     counts = Counter(hand).most_common()
-    match counts[0][1]:
-        case 5:
-            return FIVE_KIND
-        case 4:
-            return FOUR_KIND
-        case 3:
-            if counts[1][1] == 2:
-                return FULL_HOUSE
-            else:
-                return THREE_KIND
-        case 2:
-            if counts[1][1] == 2:
-                return TWO_PAIR
-            else:
-                return ONE_PAIR
-        case 1:
-            return HIGH_CARD
+    score = 10 * counts[0][1]
+    if score in {20, 30}:
+        score += counts[1][1]
+    return score
 
 def hand_type_jokers(hand):
     best_type = hand_type(hand)
