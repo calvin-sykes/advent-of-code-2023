@@ -45,7 +45,7 @@ def day1_part2(filename):
     return result
 
 if __name__ == "__main__":
-    print("Part 1 example", day1_part1("input/day1_example_part1.txt"))
+    print("Part 1 example", day1_part1("input/day1_example.txt"))
     print("Part 1", day1_part1("input/day1.txt"))
     print("Part 2 example", day1_part2("input/day1_example_part2.txt"))
     print("Part 2", day1_part2("input/day1.txt"))

@@ -63,7 +63,6 @@ def day8_part2(filename):
 
 if __name__ == "__main__":
     print("Part 1 example", day8_part1("input/day8_example.txt"))
-    print("Part 1 extra", day8_part1("input/day8_extra.txt"))
     print("Part 1", day8_part1("input/day8.txt"))
     print("Part 2 example", day8_part2("input/day8_example_part2.txt"))
     print("Part 2", day8_part2("input/day8.txt"))
