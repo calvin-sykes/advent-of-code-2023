@@ -108,8 +108,7 @@ def day10_part2(filename):
         il, ij = map(lambda c: c * 2, coords[ic])
         dirn = dirs[ic]
         dl, dj = shift(dirn)
-        coords2.append((il, ij))
-        coords2.append((il+dl, ij+dj))
+        coords2.extend([(il, ij), (il+dl, ij+dj)])
         lines2[il+dl][ij+dj] = "|" if dirn in (D.UP, D.DOWN) else "-"
     coords_set = set(coords2)
 
@@ -121,42 +120,33 @@ def day10_part2(filename):
             if (il, ij) in coords_set:
                 continue
             # Outside if on boundary
-            elif il == 0 or il == h-1 or ij==0 or ij==w-1:
+            elif il == 0 or il == h-1 or ij == 0 or ij == w-1:
                 lines2[il][ij] = "O"
             else:
                 maybe_inside.add((il, ij))
                 lines2[il][ij] = "?"
 
-    #print("Before starting search for inside tiles")
-    #prettyprint("\n".join("".join(l) for l in lines2))
-
     # Loop over maybe_inside, test for adjacency to outside, and remove if so
     # Repeat until no tiles changed in a pass
+    shifts = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     while True:
         removed = set()
         for (il, ij) in maybe_inside:
             outside = False
             # Check for immediately adjacent outside tiles
-            for dl, dj in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
-                if lines2[il+dl][ij+dj] == "O":
-                    outside = True
+            for dl, dj in shifts:
+                if lines2[il+dl][ij+dj] is "O":
+                    lines2[il][ij] = "O"
+                    removed.add((il, ij))
                     break
-            if outside:
-                lines2[il][ij] = "O"
-                removed.add((il, ij))
         if len(removed) == 0:
             break
         else:
             maybe_inside -= removed
     
     # All remaining tiles are inside
-    inside = len(maybe_inside)
     for (il, ij) in maybe_inside:
         lines2[il][ij] = "I"
-
-    #print("After search completed")
-    #prettyprint("\n".join("".join(l) for l in lines2))
-
     
     result = "\n".join("".join(l[::2]) for l in lines2[::2])
     #print("After compressing back to original field size")
