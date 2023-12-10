@@ -42,7 +42,6 @@ def lookup_reverse(the_map, location):
             return src_start + (location - dest_start)
     return location
 
-
 def day5_part1(filename):
     with open(filename) as f:
         l = f.readlines()
@@ -69,8 +68,6 @@ def day5_part2(filename):
     def bruteforce_reverse(first_loc, loc_step, max_loc):
         location = first_loc
         while location < max_loc:
-            if location % 1000 * loc_step == 0:
-                print(location, end="\r")
             map_input = location
             for mapping in reversed(maps):
                 map_output = lookup_reverse(maps[mapping], map_input)
@@ -82,9 +79,10 @@ def day5_part2(filename):
                 if seed in sr:
                     return location
             location += loc_step
+        return max_loc
 
     step = int(1e6)
-    limit = int(1e10)
+    limit = int(1e8)
     first = 0
     while True:
         limit = bruteforce_reverse(first, step, limit)
