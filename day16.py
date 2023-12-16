@@ -21,12 +21,13 @@ def beam(grid, rs, cs, d, energised=None):
     while True:
         if r < 0 or r > h - 1 or c < 0 or c > w - 1:
             break
-        if (r, c) in energised and energised[(r, c)] & (1 << d):
+        i = r * w + c
+        dd = 1 << d
+        if energised[i] & dd:
             break
         else:
-            energised[r, c] |= 1 << d
-        square = grid[r][c]
-        match square:
+            energised[i] += dd
+        match grid[r][c]:
             case "/":  d ^= 0b01
             case "\\": d ^= 0b11
             case "|" if (d & 1):
@@ -34,9 +35,9 @@ def beam(grid, rs, cs, d, energised=None):
                 beam(grid, r, c, D.SOUTH, energised)
                 break
             case "-" if not d & 1:
-                    beam(grid, r, c, D.EAST, energised)
-                    beam(grid, r, c, D.WEST, energised)
-                    break
+                beam(grid, r, c, D.EAST, energised)
+                beam(grid, r, c, D.WEST, energised)
+                break
         r, c = nudge(r, c, d)
     return energised
 
@@ -60,8 +61,8 @@ def day16_part2(filename):
         [( n,  w, D.WEST ) for n in range(h)]
 
     max_energised = 0
-    for rs, cs, d in start_positions:
-        energised = beam(grid, rs, cs, d)
+    for start in start_positions:
+        energised = beam(grid, *start)
         max_energised = max(max_energised, len(energised))
     
     return max_energised
