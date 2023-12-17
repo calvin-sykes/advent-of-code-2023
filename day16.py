@@ -1,32 +1,31 @@
 from collections import defaultdict
+from itertools import product
+from tqdm import tqdm
 
 class D:
     NORTH = 0
     EAST = 1
     SOUTH = 2
     WEST = 3
-
-def nudge(r, c, d):
     shifts = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-    dr, dc = shifts[d]
-    return r + dr, c + dc
 
 def beam(grid, rs, cs, d, energised=None):
     h, w = len(grid), len(grid[0])
-    r, c = nudge(rs, cs, d)
+    dr, dc = D.shifts[d]
+    r, c = rs + dr, cs + dc
 
     if energised is None:
         energised = defaultdict(int)
     
     while True:
-        if r < 0 or r > h - 1 or c < 0 or c > w - 1:
+        if r < 0 or r == h or c < 0 or c == w:
             break
         i = r * w + c
         dd = 1 << d
         if energised[i] & dd:
             break
         else:
-            energised[i] += dd
+            energised[i] |= dd
         match grid[r][c]:
             case "/":  d ^= 0b01
             case "\\": d ^= 0b11
@@ -38,7 +37,9 @@ def beam(grid, rs, cs, d, energised=None):
                 beam(grid, r, c, D.EAST, energised)
                 beam(grid, r, c, D.WEST, energised)
                 break
-        r, c = nudge(r, c, d)
+        dr, dc = D.shifts[d]
+        r += dr
+        c += dc
     return energised
 
 def day16_part1(filename):
