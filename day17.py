@@ -139,16 +139,6 @@ def shortest_path(grid, er, ec, ngb_func):
         length += grid[to[0]][to[1]]
         to = prev[to]
 
-    pathgrid = list()
-    for l in grid:
-        pathgrid.append([])
-        for c in l:
-            pathgrid[-1].append(str(c))
-    for (r, c, *_) in path:
-        pathgrid[r][c] = "."
-
-    #print("\n".join("".join(l) for l in pathgrid))
-    #print("->".join(str(ngb[:2]) for ngb in path))
     return length
 
 def day17_part1(filename):
