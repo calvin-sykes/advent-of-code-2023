@@ -182,8 +182,8 @@ def day22_part2(filename):
             if b != brick:
                 chain_reaction[brick.id].add(b)
             for b2 in supports[b.id]:
-                if (len(supported_by[b2.id]) == 1 and supported_by[b2.id] != b) or \
-                   all(b3 in chain_reaction[brick.id] for b3 in supported_by[b2.id] if b3 != b):
+                if (len(supported_by[b2.id]) == 1) or \
+                   all(b3 in chain_reaction[brick.id] for b3 in supported_by[b2.id]):
                     if b2 not in chain_reaction[brick.id]:
                         stack.append(b2)
     return sum(len(chain_reaction[brick_id]) for brick_id in chain_reaction)
